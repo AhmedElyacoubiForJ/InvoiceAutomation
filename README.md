@@ -23,7 +23,7 @@
 
 1. **Projekt klonen**:
     ```bash
-    git clone https://github.com/IhrGitHubName/InvoiceAutomation.git
+    git clone https://github.com/AhmedElyacoubiForJ/InvoiceAutomation.git
     cd InvoiceAutomation
     ```
 
@@ -32,6 +32,14 @@
     mvn clean install
     mvn spring-boot:run
     ```
+
+## Hinweise
+
+- **Verwendetes Camunda Projekt-Initializer**: Das Projekt wurde mit Hilfe des Camunda Initializer unter [Camunda Automation Platform 7 Initializr](https://start.camunda.com/) erstellt, um eine schnelle und einfache Integration von Camunda BPM in ein Spring Boot-Projekt zu ermöglichen.
+- **Camunda Web Application**: Nachdem das Projekt gestartet wurde, kann die Camunda Webanwendung unter `http://localhost:8080/camunda` aufgerufen werden, um den BPMN-Prozess zu überwachen und zu steuern.
+- **Datenbank**: Für lokale Tests wird die H2-Datenbank verwendet. In einer Produktionsumgebung kann dies auf eine andere relationale Datenbank wie MySQL oder PostgreSQL umgestellt werden.
+
+
 
 ## Nutzung
 
@@ -44,3 +52,4 @@
 curl -X POST http://localhost:8080/api/invoices/process \
      -H "Content-Type: application/json" \
      -d '{"invoiceNumber":"INV12345", "amount": "150.75", "status": "NEW"}'
+```

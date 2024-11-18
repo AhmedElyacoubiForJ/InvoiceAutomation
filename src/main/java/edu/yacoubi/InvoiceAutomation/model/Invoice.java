@@ -1,9 +1,9 @@
 package edu.yacoubi.InvoiceAutomation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +18,16 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
+    @Size(min = 1, max = 100)
     private String invoiceNumber;
+
+    @Positive
     private BigDecimal amount;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private InvoiceStatus status;
+
     private Boolean extracted = false;
 }

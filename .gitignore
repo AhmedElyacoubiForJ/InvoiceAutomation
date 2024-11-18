@@ -1,5 +1,11 @@
 HELP.md
 target/
+z_impl_details_docs/Erste_Use_Case_Details.md
+z_impl_details_docs/Happy_Path.md
+z_impl_details_docs/BPMN_Details.md
+z_impl_details_docs/Project_Structure.md
+z_impl_details_docs/Ist_Zustand.md
+z_impl_details_docs/Trenen_Business_Camunda_DB.md
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

@@ -39,8 +39,6 @@
 - **Camunda Web Application**: Nachdem das Projekt gestartet wurde, kann die Camunda Webanwendung unter `http://localhost:8080/camunda` aufgerufen werden, um den BPMN-Prozess zu überwachen und zu steuern.
 - **Datenbank**: Für lokale Tests wird die H2-Datenbank verwendet. In einer Produktionsumgebung kann dies auf eine andere relationale Datenbank wie MySQL oder PostgreSQL umgestellt werden.
 
-
-
 ## Nutzung
 
 - **Starten Sie das Projekt**: Die Anwendung ist unter `http://localhost:8080` erreichbar.

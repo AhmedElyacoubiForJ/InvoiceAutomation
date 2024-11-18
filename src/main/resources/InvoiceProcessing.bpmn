@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                  id="Definitions_InvoiceProcessing"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:process id="InvoiceProcessing-process" name="Invoice Processing" isExecutable="true" camunda:historyTimeToLive="180">
+
+    <bpmn:startEvent id="StartEvent_Invoice">
+      <bpmn:outgoing>SequenceFlow_StartToTask</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:sequenceFlow id="SequenceFlow_StartToTask" sourceRef="StartEvent_Invoice" targetRef="ProcessInvoiceTask" />
+
+    <!-- Example Service Task that uses Camunda delegateExpression -->
+    <bpmn:serviceTask id="ProcessInvoiceTask" name="Process Invoice"
+                      camunda:delegateExpression="${invoiceProcessingDelegate}">
+      <bpmn:incoming>SequenceFlow_StartToTask</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_TaskToEnd</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:sequenceFlow id="SequenceFlow_TaskToEnd" sourceRef="ProcessInvoiceTask" targetRef="EndEvent_Invoice" />
+
+    <bpmn:endEvent id="EndEvent_Invoice">
+      <bpmn:incoming>SequenceFlow_TaskToEnd</bpmn:incoming>
+    </bpmn:endEvent>
+
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_InvoiceProcessing">
+    <bpmndi:BPMNPlane id="BPMNPlane_InvoiceProcessing" bpmnElement="InvoiceProcessing-process">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_Invoice" bpmnElement="StartEvent_Invoice">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="_BPMNShape_ProcessInvoiceTask" bpmnElement="ProcessInvoiceTask">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_Invoice" bpmnElement="EndEvent_Invoice">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="SequenceFlow_StartToTask_di" bpmnElement="SequenceFlow_StartToTask">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="SequenceFlow_TaskToEnd_di" bpmnElement="SequenceFlow_TaskToEnd">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

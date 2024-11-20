@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                   xmlns:modeler="http://camunda.org/schema/modeler/1.0"
+                   id="Definitions_0h16ydx"
+                   targetNamespace="http://bpmn.io/schema/bpmn"
+                   exporter="Camunda Modeler"
+                   exporterVersion="5.29.0"
+                   modeler:executionPlatform="Camunda Platform"
+                   modeler:executionPlatformVersion="7.22.0">
+
+  <!-- Der Hauptprozess beginnt hier -->
+  <bpmn:process id="SimpleProcessing-process" name="Simple Processing" isExecutable="true">
+
+    <!-- Start Event: Der Beginn des Prozesses -->
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <!-- Die ausgehende Sequenz startet den Prozess -->
+      <bpmn:outgoing>Flow_0coljo3</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <!-- Verbindung zwischen Start Event und User Task -->
+    <bpmn:sequenceFlow id="Flow_0coljo3" sourceRef="StartEvent_1" targetRef="Activity_18xzzoo" />
+
+    <!-- User Task: Ein manueller Schritt, der von einem Benutzer ausgeführt wird -->
+    <!-- In diesem Beispiel: "HR Task", um eine Aufgabe in einem HR-Kontext zu simulieren -->
+    <bpmn:userTask id="Activity_18xzzoo" name="HR Task">
+      <!-- Eingehender Fluss von der vorherigen Aktivität -->
+      <bpmn:incoming>Flow_0coljo3</bpmn:incoming>
+      <!-- Ausgehender Fluss zur nächsten Aktivität -->
+      <bpmn:outgoing>Flow_0kcwm5f</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <!-- End Event: Der Abschluss des Prozesses -->
+    <bpmn:endEvent id="Event_08zkt6a" name="End">
+      <!-- Eingehender Fluss vom vorherigen Element -->
+      <bpmn:incoming>Flow_0kcwm5f</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Verbindung zwischen User Task und End Event -->
+    <bpmn:sequenceFlow id="Flow_0kcwm5f" sourceRef="Activity_18xzzoo" targetRef="Event_08zkt6a" />
+
+  </bpmn:process>
+
+  <!-- Diagrammelemente für die grafische Darstellung im Camunda Modeler -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SimpleProcessing-process">
+
+      <!-- Darstellung des Start Events -->
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="188" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Darstellung der User Task -->
+      <bpmndi:BPMNShape id="Activity_0f5v9sm_di" bpmnElement="Activity_18xzzoo">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+
+      <!-- Darstellung des End Events -->
+      <bpmndi:BPMNShape id="Event_08zkt6a_di" bpmnElement="Event_08zkt6a">
+        <dc:Bounds x="422" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Darstellung der Verbindung zwischen Start Event und User Task -->
+      <bpmndi:BPMNEdge id="Flow_0coljo3_di" bpmnElement="Flow_0coljo3">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+
+      <!-- Darstellung der Verbindung zwischen User Task und End Event -->
+      <bpmndi:BPMNEdge id="Flow_0kcwm5f_di" bpmnElement="Flow_0kcwm5f">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="422" y="120" />
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

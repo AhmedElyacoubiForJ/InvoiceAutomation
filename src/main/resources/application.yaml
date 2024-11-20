@@ -2,6 +2,12 @@ camunda.bpm.admin-user:
   id: demo
   password: demo
 
+camunda:
+  bpm:
+    generic-properties:
+      properties:
+        historyTimeToLive: P1D
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb

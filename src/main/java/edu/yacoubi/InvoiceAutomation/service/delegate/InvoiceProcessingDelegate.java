@@ -7,8 +7,6 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component("invoiceProcessingDelegate")
 @RequiredArgsConstructor
 public class InvoiceProcessingDelegate implements JavaDelegate {

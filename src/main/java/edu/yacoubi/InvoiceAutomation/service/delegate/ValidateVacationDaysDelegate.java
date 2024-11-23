@@ -20,8 +20,8 @@ public class ValidateVacationDaysDelegate implements JavaDelegate {
     }
 
     private void validateVacationDays(DelegateExecution execution) {
-        Integer requestedVacationDays = getRequiredIntegerVariable(execution, "requestedVacationDays");
-        Integer remainingVacationDays = getRequiredIntegerVariable(execution, "remainingVacationDays");
+        Integer requestedVacationDays = ((Long) execution.getVariable("requestedVacationDays")).intValue();
+        Integer remainingVacationDays = ((Long) execution.getVariable("remainingVacationDays")).intValue();
 
         VacationValidator.validate(requestedVacationDays, remainingVacationDays);
 

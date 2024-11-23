@@ -24,9 +24,10 @@
     <bpmn:startEvent id="Event_00rkhmr" name="Start">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="leaveType" label="leave Type" type="string" defaultValue="1" />
-          <camunda:formField id="requestedVacationDays" label="Requested Vacation Days" type="long" defaultValue="7" />
-          <camunda:formField id="remainingVacationDays" label="Remaining Vacation Days" type="long" defaultValue="30" />
+          <camunda:formField id="leaveType" label="Leave Type" type="string" defaultValue="1" />
+          <camunda:formField id="requestedVacationDays" label="Requested Vacation Days" type="long" defaultValue="5" />
+          <camunda:formField id="remainingVacationDays" label="Remaining Vacation Days" type="long" defaultValue="20" />
+          <camunda:formField id="leaveStatus" label="Leave Status" type="string" defaultValue="pending" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_047b5os</bpmn:outgoing>

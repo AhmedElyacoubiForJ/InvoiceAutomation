@@ -1,124 +1,141 @@
-Hier ist ein Entwurf für die Datei `LeaveRequestProcess.md`, in der der gesamte Prozess und die bisherigen Fortschritte dokumentiert werden können:
+# **LeaveRequestProcess**
+
+Dieses Dokument beschreibt die Implementierung und den Aufbau des **LeaveRequestProcess**. Ziel ist es, die Genehmigung von Urlaubsanträgen innerhalb eines Geschäftsprozesses zu validieren und zu aktualisieren. Die Implementierung wurde mit **Camunda BPM** und **Spring Boot** realisiert.
 
 ---
 
-# **Leave Request Process Documentation**
-
-## **Overview**
-The Leave Request Process is a business workflow implemented using Camunda BPMN 2.0 and Java Delegates. It manages the process of requesting, validating, approving, and updating leave requests within an organization.
-
----
-
-## **Key Features**
-1. **Request Leave:** Employees can request leave specifying the type and duration.
-2. **Validate Leave Balance:** Checks if the requested leave days are within the remaining vacation balance.
-3. **Approve/Reject Leave:** Based on the validation, the leave is either approved or rejected.
-4. **Update Leave Record:** If approved, the remaining leave days are updated and the status is changed.
-
----
-
-## **BPMN Model**
-The BPMN diagram contains the following key elements:
-1. **Start Event** - Initiates the process with input variables:
-    - `leaveType`: Type of leave (e.g., vacation, sick leave).
-    - `requestedVacationDays`: Number of days requested.
-    - `remainingVacationDays`: Employee's available leave balance.
-2. **Validation Task** (Service Task): Validates the requested days using `ValidateVacationDaysDelegate`.
-3. **Approval Task** (User Task): Decision point where leave is approved or rejected.
-4. **Update Leave Task** (Service Task): Updates the leave balance and status using `UpdateLeaveDelegate`.
-5. **End Event** - Completes the process.
+## **Inhaltsverzeichnis**
+1. [Prozessbeschreibung](#prozessbeschreibung)
+2. [BPMN-Modell](#bpmn-modell)
+3. [Java-Delegates](#java-delegates)
+    - [ValidateVacationDaysDelegate](#validatevacationdaysdelegate)
+    - [UpdateLeaveDelegate](#updateleavedelegate)
+4. [Hilfsklassen](#hilfsklassen)
+    - [VacationValidator](#vacationvalidator)
+5. [Testfälle](#testfälle)
+6. [Startparameter](#startparameter)
+7. [Protokollierung](#protokollierung)
 
 ---
 
-## **Implemented Java Delegates**
+## **Prozessbeschreibung**
+Der Prozess beginnt mit der Überprüfung der eingegebenen Urlaubsdaten und validiert, ob der beantragte Urlaub den verfügbaren Urlaubstagen entspricht. Anschließend wird der Status aktualisiert.
 
-### **1. ValidateVacationDaysDelegate**
-- **Purpose:** Validate that the requested leave days do not exceed the remaining vacation balance.
-- **Inputs:**
-    - `requestedVacationDays`
-    - `remainingVacationDays`
-- **Outputs:**
-    - Throws a `BpmnError` if validation fails.
-- **Logging Example:**
-  ```
-  Process details: activityName='Validate Balance', 
-  activityId='Activity_1b5l5jl', 
-  requestedVacationDays=5, remainingVacationDays=20
-  ```
+### **Schritte:**
+1. **StartEvent**: Initialisiert den Prozess mit den Startvariablen.
+2. **Validate Balance**: Überprüft die Eingabedaten (z. B. beantragte und verbleibende Urlaubstage).
+3. **Update Leave**: Aktualisiert die verbleibenden Urlaubstage und den Status des Antrags.
+4. **EndEvent**: Beendet den Prozess.
 
 ---
 
-### **2. UpdateLeaveDelegate**
-- **Purpose:** Updates the remaining leave balance and status after approval.
-- **Inputs:**
-    - `approve`: Boolean indicating if the leave is approved.
-    - `requestedVacationDays`
-    - `remainingVacationDays`
-- **Outputs:**
-    - Updates `remainingVacationDays` by subtracting `requestedVacationDays`.
-    - Sets `leaveStatus` to `"Updated"`.
-
-- **Logging Example:**
-  ```
-  Update Leave Process details: activityName='Update Leave', 
-  remainingVacationDays=15, leaveStatus='Updated'
-  ```
+## **BPMN-Modell**
+Das BPMN-Modell enthält folgende wichtige Variablen:
+- `leaveType` (String): Art des Urlaubs.
+- `requestedVacationDays` (Integer): Anzahl der beantragten Urlaubstage.
+- `remainingVacationDays` (Integer): Verfügbare Urlaubstage.
+- `leaveStatus` (String): Status des Urlaubsantrags (z. B. „pending“, „approved“, „denied“).
+- `approve` (Boolean): Gibt an, ob der Antrag genehmigt wurde.
 
 ---
 
-## **Process Variables**
+## **Java-Delegates**
 
-| Variable               | Type     | Description                                  |
-|------------------------|----------|----------------------------------------------|
-| `leaveType`            | `String` | Type of leave (e.g., vacation, sick leave).  |
-| `requestedVacationDays`| `Long`   | Number of days the employee is requesting.   |
-| `remainingVacationDays`| `Long`   | Employee's available leave balance.          |
-| `leaveStatus`          | `String` | Status of the leave request (e.g., pending, approved). |
-| `approve`              | `Boolean`| Decision on whether the leave is approved.   |
+### **ValidateVacationDaysDelegate**
+- **Paket:** `edu.yacoubi.InvoiceAutomation.service.delegate`
+- **Zweck:** Validiert die Urlaubsdaten und wirft bei Fehlern eine BPMN-Fehlermeldung.
+- **Hauptmethoden:**
+    - `validateVacationDays`: Prüft, ob die eingegebenen Daten korrekt sind.
+    - `getRequiredIntegerVariable`: Extrahiert Prozessvariablen und stellt sicher, dass sie Integer-Werte sind.
 
----
+```java
+@Override
+public void execute(DelegateExecution execution) throws Exception {
+    logExecutionDetails(execution);
+    validateVacationDays(execution);
+}
+```
 
-## **Process Flow**
-
-1. **Start Process:**
-    - Define variables: `leaveType`, `requestedVacationDays`, `remainingVacationDays`, and `leaveStatus`.
-2. **Validation:**
-    - Validate leave using `ValidateVacationDaysDelegate`.
-    - If invalid, throw a `BpmnError` and terminate the process.
-3. **Approval:**
-    - Manual approval by a manager.
-    - Sets `approve` variable to `true` or `false`.
-4. **Update Leave:**
-    - If approved:
-        - Update `remainingVacationDays` by subtracting `requestedVacationDays`.
-        - Change `leaveStatus` to `"Updated"`.
-    - If rejected:
-        - Terminate the process without changes.
+### **UpdateLeaveDelegate**
+- **Paket:** `edu.yacoubi.InvoiceAutomation.service.delegate`
+- **Zweck:** Aktualisiert die verbleibenden Urlaubstage und den Status basierend auf der Genehmigung.
+- **Hauptmethoden:**
+    - `execute`: Berechnet neue Werte für `remainingVacationDays` und `leaveStatus`.
 
 ---
 
-## **Testing**
+## **Hilfsklassen**
 
-### **Unit Tests**
-- **ValidateVacationDaysDelegateTest:** Validates scenarios for requested days within and exceeding balance.
-- **UpdateLeaveDelegateTest:** Ensures correct updates to variables based on approval status.
+### **VacationValidator**
+- **Paket:** `edu.yacoubi.InvoiceAutomation.util`
+- **Zweck:** Führt Validierungen für die eingegebenen Urlaubsdaten durch.
+- **Methoden:**
+    - `validate`: Validiert, ob die Daten sinnvoll sind (z. B. keine negativen Werte).
+- **Konstanten:**
+    - `VALIDATION_ERROR`
+    - `VACATION_DAYS_NOT_SET`
+    - `NEGATIVE_VACATION_DAYS`
+    - `EXCEEDS_REMAINING_DAYS`
 
-### **Integration Tests**
-- Full process test to verify the workflow in Camunda.
-
----
-
-## **Next Steps**
-1. Refactor hardcoded variables in the Start Event into process inputs for better flexibility.
-2. Add exception handling for boundary cases.
-3. Create more comprehensive test cases for edge scenarios.
-
----
-
-## **Repository**
-The full implementation is available in the GitHub repository: [Leave Request Process](https://github.com/AhmedElyacoubiForJ/InvoiceAutomation/tree/main/src/main/java/edu/yacoubi/InvoiceAutomation/service/delegate).
+```java
+if (requestedVacationDays > remainingVacationDays) {
+    throw new BpmnError(VALIDATION_ERROR, EXCEEDS_REMAINING_DAYS);
+}
+```
 
 ---
 
-## **Changelog**
-- **2024-11-23:** Initial implementation completed with `ValidateVacationDaysDelegate` and `UpdateLeaveDelegate`.
+## **Testfälle**
+
+Die folgenden Testfälle wurden implementiert:
+1. **Positive Tests:**
+    - Validierung von korrekt eingegebenen Urlaubsdaten.
+    - Aktualisierung der verbleibenden Urlaubstage.
+2. **Negative Tests:**
+    - Beantragte Urlaubstage überschreiten die verbleibenden Urlaubstage.
+    - Fehlende oder ungültige Variablen.
+
+Testbeispiel für überzogene Urlaubstage:
+```java
+@Test
+void shouldThrowErrorForExceedingVacationDays() {
+    when(execution.getVariable("requestedVacationDays")).thenReturn(15);
+    when(execution.getVariable("remainingVacationDays")).thenReturn(10);
+
+    Exception exception = assertThrows(BpmnError.class, () -> delegate.execute(execution));
+    assertTrue(exception.getMessage().contains("Requested vacation days exceed remaining vacation days"));
+}
+```
+
+---
+
+## **Startparameter**
+
+Die folgenden Parameter können beim Start des Prozesses gesetzt werden:
+- `leaveType`: Art des Urlaubs (z. B. „Erholungsurlaub“).
+- `requestedVacationDays`: Anzahl der beantragten Urlaubstage.
+- `remainingVacationDays`: Verfügbare Urlaubstage.
+- `leaveStatus`: Status des Urlaubs (z. B. „pending“).
+
+Beispiel:
+```json
+{
+  "leaveType": "Erholungsurlaub",
+  "requestedVacationDays": 5,
+  "remainingVacationDays": 20,
+  "leaveStatus": "pending"
+}
+```
+
+---
+
+## **Protokollierung**
+
+Die Protokollierung erfolgt über `Slf4j`. Hier ein Beispiel eines Log-Eintrags:
+```plaintext
+INFO  UpdateLeaveDelegate - Leave updated successfully. remainingVacationDays=15, leaveStatus=Updated
+```
+
+---
+
+Dieses Dokument bietet eine Übersicht über die aktuelle Implementierung. Weitere Optimierungen können in zukünftigen Iterationen erfolgen.

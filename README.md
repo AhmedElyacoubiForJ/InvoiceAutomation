@@ -51,3 +51,5 @@ curl -X POST http://localhost:8080/api/invoices/process \
      -H "Content-Type: application/json" \
      -d '{"invoiceNumber":"INV12345", "amount": "150.75", "status": "NEW"}'
 ```
+
+> **Für weitere Informationen zu meiner Arbeit mit BPMN und Camunda, siehe mein separates Projekt** [LeaveRequestProcess](https://github.com/AhmedElyacoubiForJ/Camunda-LeaveRequest)
